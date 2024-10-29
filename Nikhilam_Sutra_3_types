@@ -1,0 +1,88 @@
+# Helper function to calculate complement
+def complement(base, number):
+    return base - number
+
+
+# Determine the nearest power of 10 for a number
+def nearest_power_of_10(n):
+    power = 10 ** len(str(abs(n)))
+    return power if abs(n) <= power else power * 10
+
+
+# Special handling for cases where neither number is close to a power of 10
+def special_case(mcand, mlier):
+    len_multiplier = len(str(abs(mlier)))
+    beta = int(str(mcand)[-len_multiplier:])  # Last digits matching multiplier's length
+    alpha = int(str(mcand)[:-len_multiplier])  # Remaining leading digits
+    alphaPlus1 = alpha + 1  # Increased alpha for subtraction with beta
+
+    print(f"\nSpecial Case Handling:")
+    print(f"Original Alpha: {alpha}, AlphaPlus1: {alphaPlus1}")
+    print(f"Beta (trailing part): {beta}")
+
+    # Second part calculation: subtract alphaPlus1 from beta to get new_beta
+    new_beta = beta - alphaPlus1
+    print(f"Second Part (beta - alphaPlus1): {new_beta}")
+
+    # Apply Nikhilam Sutra to the original beta
+    base = 10 ** len(str(beta))
+    beta_complement = base - beta
+    third_part = beta_complement
+
+    print(f"Third Part (Nikhilam on original beta): {third_part}")
+
+    # Concatenate parts for the final result
+    rezult = int(f"{alpha}{new_beta}{third_part}")
+    print(f"Final Result (Concatenating parts): {rezult}")
+    return rezult
+
+
+# Main Nikhilam operation function
+def nikhilam_operation(mcand, mlier):
+    base_mult = nearest_power_of_10(mcand)
+    base_multi = nearest_power_of_10(mlier)
+
+    print(f"\nMultiplicand: {mcand}, Multiplier: {mlier}")
+    print(f"Closest base to multiplicand: {base_mult}, Closest base to multiplier: {base_multi}")
+
+    if base_mult == base_multi:
+        print("Type 1: Both numbers are close to a power of 10")
+
+        comp_mult = complement(base_mult, mcand)
+        comp_multi = complement(base_multi, mlier)
+
+        cross_sum = mcand - comp_multi
+        product_complements = comp_mult * comp_multi
+        rezult = cross_sum * base_mult + product_complements
+
+        print(f"Complement of {mcand} is {comp_mult}, complement of {mlier} is {comp_multi}")
+        print(f"Cross-sum step: {mcand} - ({comp_multi}) = {cross_sum}")
+        print(f"Product of complements step: {comp_mult} * {comp_multi} = {product_complements}")
+        print(f"Final result: ({cross_sum} * {base_mult}) + {product_complements} = {rezult}")
+        return rezult
+
+    elif base_mult != base_multi and (abs(mcand) >= base_mult or abs(mlier) >= base_multi):
+        print("Type 2: One number close to a power of 10, the other not (Nikhilam inapplicable)")
+
+        rezult = mcand * mlier
+        print("Result using standard multiplication:", rezult)
+        return rezult
+
+    else:
+        print("Type 3: Neither number close to a power of 10 (Special Case Handling)")
+        if mcand > mlier:
+            return special_case(mcand, mlier)
+        else:
+            rezult = mcand * mlier
+            print("Result using standard multiplication:", rezult)
+            return rezult
+
+
+# Main code to take user input
+try:
+    multiplicand = int(input("Enter the multiplicand: "))
+    multiplier = int(input("Enter the multiplier: "))
+    result = nikhilam_operation(multiplicand, multiplier)
+    print(f"Final Result: {result}")
+except ValueError:
+    print("Please enter valid integers for multiplicand and multiplier.")
